@@ -16,6 +16,15 @@
   box-sizing: border-box;
 }
 
+.box {
+  overflow: auto;
+  scrollbar-width: none; /* Firefox */
+}
+
+.box::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 html {
   font-size: 62.5%;
 }
@@ -138,7 +147,8 @@ body {
 .list {
   list-style: none;
   padding: 0.8rem 0;
-  overflow: scroll;
+  overflow: auto;
+  scrollbar-width: none;
 }
 
 .list-watched {

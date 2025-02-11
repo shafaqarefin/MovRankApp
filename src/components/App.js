@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { NavBar } from "./Navbar/NavBar";
 import { Main } from "./Main/Main";
-
+import { Logo } from "./Navbar/Logo";
+import { SearchBar } from "./Navbar/SearchBar";
+import { SearchResultCount } from "./Navbar/SearchResultCount";
+import { Box } from "./Main/MovieList/Box";
+import { MovieSummary } from "./Main/MoviesSummary/MovieSummary";
+import { MoviesToSee } from "./Main/MovieList/MovieToSee";
+import { WatchedMoviesList } from "./Main/MovieList/WatchedMoviesList";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -51,11 +57,26 @@ export const tempWatchedData = [
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
-  const [query, setQuery] = useState("");
+  const [watched, setWatched] = useState(tempWatchedData);
+  const [isOpen1, setIsOpen1] = useState(true);
+  const [isOpen2, setIsOpen2] = useState(true);
   return (
     <>
-      <NavBar movies={movies} setQuery={setQuery} query={query} />
-      <Main movies={movies} />
+      <NavBar>
+        <Logo />
+        <SearchBar />
+        <SearchResultCount movies={movies} />
+      </NavBar>
+
+      <Main>
+        <Box movies={movies} isOpen={isOpen1} setIsOpen={setIsOpen1}>
+          <MoviesToSee movies={movies} />
+        </Box>
+        <Box isOpen={isOpen2} setIsOpen={setIsOpen2}>
+          <MovieSummary watched={watched} />
+          <WatchedMoviesList watched={watched} />
+        </Box>
+      </Main>
     </>
   );
 }
