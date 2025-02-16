@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { NavBar } from "./Navbar/NavBar";
 import { Main } from "./Main/Main";
 import { Logo } from "./Navbar/Logo";
@@ -55,22 +55,66 @@ export const tempWatchedData = [
   },
 ];
 
+const KEY = "121f5573";
+
 export default function App() {
-  const [movies, setMovies] = useState(tempMovieData);
+  const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState(tempWatchedData);
   const [isOpen1, setIsOpen1] = useState(true);
   const [isOpen2, setIsOpen2] = useState(true);
+  const [query, setQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errMssg, setErrMssg] = useState("");
+  useEffect(
+    function () {
+      async function fetchMovies() {
+        if (!query) {
+          return;
+        }
+        try {
+          setIsLoading(true);
+          setErrMssg("");
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+          );
+
+          if (!res.ok) {
+            console.log("res ok not running");
+            throw new Error(`Error Fetching Details`);
+          }
+
+          const movies = await res.json();
+
+          if (movies.Response === "True") {
+            setMovies(movies.Search);
+          } else {
+            throw new Error("Movies not found");
+          }
+        } catch (err) {
+          setErrMssg(err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+
+      fetchMovies();
+    },
+    [query]
+  );
+
   return (
     <>
       <NavBar>
         <Logo />
-        <SearchBar />
+        <SearchBar query={query} setQuery={setQuery} />
         <SearchResultCount movies={movies} />
       </NavBar>
 
       <Main>
         <Box movies={movies} isOpen={isOpen1} setIsOpen={setIsOpen1}>
-          <MoviesToSee movies={movies} />
+          {isLoading && <Loader />}
+          {!isLoading && !errMssg && <MoviesToSee movies={movies} />}
+          {errMssg && <ErrorMssg message={errMssg} />}
         </Box>
         <Box isOpen={isOpen2} setIsOpen={setIsOpen2}>
           <MovieSummary watched={watched} />
@@ -78,5 +122,18 @@ export default function App() {
         </Box>
       </Main>
     </>
+  );
+}
+
+function Loader() {
+  return <p className="loader">Loading...</p>;
+}
+
+function ErrorMssg({ message }) {
+  return (
+    <p className="error">
+      <span>⛔</span>
+      {message}
+    </p>
   );
 }
