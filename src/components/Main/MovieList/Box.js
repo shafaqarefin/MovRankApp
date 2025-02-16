@@ -1,4 +1,3 @@
-import { MovieSummary } from "../MoviesSummary/MovieSummary";
 export function Box({ isOpen, setIsOpen, children }) {
   return (
     <div className="box">
