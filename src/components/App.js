@@ -8,6 +8,7 @@ import { Box } from "./Main/MovieList/Box";
 import { MovieSummary } from "./Main/MoviesSummary/MovieSummary";
 import { MoviesToSee } from "./Main/MovieList/MovieToSee";
 import { WatchedMoviesList } from "./Main/MovieList/WatchedMoviesList";
+import MovieDetails from "./Main/Movie Details/MovieDetails";
 const tempMovieData = [
   {
     imdbID: "tt1375666",
@@ -55,7 +56,7 @@ export const tempWatchedData = [
   },
 ];
 
-const KEY = "121f5573";
+export const KEY = "121f5573";
 
 export default function App() {
   const [movies, setMovies] = useState([]);
@@ -65,10 +66,17 @@ export default function App() {
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errMssg, setErrMssg] = useState("");
+  const [selectMovie, setSelectMovie] = useState(null);
+
+  function onCloseMovie() {
+    setSelectMovie(null);
+  }
+
   useEffect(
     function () {
       async function fetchMovies() {
         if (!query) {
+          setMovies(tempMovieData);
           return;
         }
         try {
@@ -79,13 +87,13 @@ export default function App() {
           );
 
           if (!res.ok) {
-            console.log("res ok not running");
             throw new Error(`Error Fetching Details`);
           }
 
           const movies = await res.json();
 
           if (movies.Response === "True") {
+            console.log(movies.Search);
             setMovies(movies.Search);
           } else {
             throw new Error("Movies not found");
@@ -113,19 +121,36 @@ export default function App() {
       <Main>
         <Box movies={movies} isOpen={isOpen1} setIsOpen={setIsOpen1}>
           {isLoading && <Loader />}
-          {!isLoading && !errMssg && <MoviesToSee movies={movies} />}
+          {!isLoading && !errMssg && (
+            <MoviesToSee
+              movies={movies}
+              setSelectMovie={setSelectMovie}
+              selectMovie={selectMovie}
+            />
+          )}
           {errMssg && <ErrorMssg message={errMssg} />}
         </Box>
         <Box isOpen={isOpen2} setIsOpen={setIsOpen2}>
-          <MovieSummary watched={watched} />
-          <WatchedMoviesList watched={watched} />
+          {selectMovie ? (
+            <MovieDetails
+              setSelectMovie={setSelectMovie}
+              onCloseMovie={onCloseMovie}
+              movies={movies}
+              selectMovie={selectMovie}
+            />
+          ) : (
+            <>
+              <MovieSummary watched={watched} selectMovie={selectMovie} />
+              <WatchedMoviesList watched={watched} selectMovie={selectMovie} />
+            </>
+          )}
         </Box>
       </Main>
     </>
   );
 }
 
-function Loader() {
+export function Loader() {
   return <p className="loader">Loading...</p>;
 }
 
