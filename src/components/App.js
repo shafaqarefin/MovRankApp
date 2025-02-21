@@ -68,10 +68,19 @@ export default function App() {
   const [errMssg, setErrMssg] = useState("");
   const [selectMovie, setSelectMovie] = useState(null);
 
-  function onCloseMovie() {
+  function onAddWatchedMovie(movie) {
+    const updatedWatched = [...watched, movie];
+    setWatched(updatedWatched);
     setSelectMovie(null);
   }
 
+  function onCloseMovie() {
+    setSelectMovie(null);
+  }
+  function onDeleteMovie(id) {
+    const updatedWatched = watched.filter((movies) => movies.imdbID !== id);
+    setWatched(updatedWatched);
+  }
   useEffect(
     function () {
       async function fetchMovies() {
@@ -133,15 +142,21 @@ export default function App() {
         <Box isOpen={isOpen2} setIsOpen={setIsOpen2}>
           {selectMovie ? (
             <MovieDetails
+              watched={watched}
               setSelectMovie={setSelectMovie}
               onCloseMovie={onCloseMovie}
               movies={movies}
               selectMovie={selectMovie}
+              onAddWatchedMovie={onAddWatchedMovie}
             />
           ) : (
             <>
               <MovieSummary watched={watched} selectMovie={selectMovie} />
-              <WatchedMoviesList watched={watched} selectMovie={selectMovie} />
+              <WatchedMoviesList
+                watched={watched}
+                selectMovie={selectMovie}
+                onDeleteMovie={onDeleteMovie}
+              />
             </>
           )}
         </Box>
