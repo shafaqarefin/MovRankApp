@@ -56,7 +56,7 @@ export const tempWatchedData = [
   },
 ];
 
-export const KEY = "121f5573";
+export const KEY = process.env.REACT_APP_OMDB_API_KEY; //if you have your own key use it here.
 
 export default function App() {
   const [movies, setMovies] = useState([]);
