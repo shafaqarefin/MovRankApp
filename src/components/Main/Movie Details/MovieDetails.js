@@ -70,6 +70,16 @@ export default function MovieDetails({
     Director: director,
     Genre: genre,
   } = movDetails;
+  useEffect(
+    function () {
+      if (!title) return;
+      document.title = `Movie: ${title}`;
+      return function () {
+        document.title = "MovRank";
+      };
+    },
+    [title]
+  );
   const movieExist = watched.find((movie) => movie.imdbID === selectMovie);
 
   return (
