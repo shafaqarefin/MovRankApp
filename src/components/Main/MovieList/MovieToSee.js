@@ -1,8 +1,15 @@
-export function MoviesToSee({ movies }) {
+export function MoviesToSee({ movies, setSelectMovie, selectMovie }) {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {movies?.map((movie) => (
-        <li key={movie.imdbID}>
+        <li
+          key={movie.imdbID}
+          onClick={(e) => {
+            selectMovie === movie.imdbID
+              ? setSelectMovie(null)
+              : setSelectMovie(movie.imdbID);
+          }}
+        >
           <img src={movie.Poster} alt={`${movie.Title} poster`} />
           <h3>{movie.Title}</h3>
           <div>
