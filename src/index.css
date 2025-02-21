@@ -3,10 +3,9 @@
   --color-primary-light: #72b6ee;
   --color-text: #2e2e2e;
   --color-text-dark: #1a1a1a;
-  --color-background-100: #f7f9fc;
+  --color-background-100: #f0f4fa;
   --color-background-500: #dde3ec;
-  --color-background-900: #121212;
-  --color-red: #e63946;
+  --color-background-900: #ededed;
   --color-red-dark: #b22222;
   --color-accent: #f4a261;
   --color-green: #2a9d8f;
@@ -139,7 +138,7 @@ body {
   border-radius: 50%;
   border: none;
   background-color: var(--color-background-900);
-  color: whitesmoke;
+  color: black;
   font-size: 1.4rem;
   font-weight: bold;
   cursor: pointer;
