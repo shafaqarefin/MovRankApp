@@ -60,7 +60,7 @@ export const KEY = process.env.REACT_APP_OMDB_API_KEY; //if you have your own ke
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState(tempWatchedData);
+  const [watched, setWatched] = useState([]);
   const [isOpen1, setIsOpen1] = useState(true);
   const [isOpen2, setIsOpen2] = useState(true);
   const [query, setQuery] = useState("");
@@ -83,16 +83,20 @@ export default function App() {
   }
   useEffect(
     function () {
+      const controller = new AbortController();
       async function fetchMovies() {
         if (!query) {
-          setMovies(tempMovieData);
+          setMovies([]);
+          setErrMssg("");
           return;
         }
         try {
           setIsLoading(true);
           setErrMssg("");
+          onCloseMovie();
           const res = await fetch(
-            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`
+            `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+            { signal: controller.signal }
           );
 
           if (!res.ok) {
@@ -102,19 +106,21 @@ export default function App() {
           const movies = await res.json();
 
           if (movies.Response === "True") {
-            console.log(movies.Search);
             setMovies(movies.Search);
           } else {
             throw new Error("Movies not found");
           }
         } catch (err) {
-          setErrMssg(err.message);
+          if (err.name !== "AbortError") setErrMssg(err.message);
         } finally {
           setIsLoading(false);
         }
       }
 
       fetchMovies();
+      return function () {
+        controller.abort();
+      };
     },
     [query]
   );
