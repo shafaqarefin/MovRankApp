@@ -32,11 +32,6 @@ export default function StarRating({
     alignItems: "center",
   };
   const componentStyle = {
-    paddingTop: "48px",
-    paddingBottom: "48px",
-    paddingLeft: "48px",
-    paddingRight: "48px",
-    backgroundColor: "darkgray",
     display: "grid",
   };
   return (
