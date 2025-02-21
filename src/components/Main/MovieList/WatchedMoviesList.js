@@ -1,4 +1,7 @@
-export function WatchedMoviesList({ watched }) {
+export function WatchedMoviesList({ watched, onDeleteMovie }) {
+  function handleDeleteMovie(id) {
+    onDeleteMovie(id);
+  }
   return (
     <ul className="list">
       {watched.map((movie) => (
@@ -18,6 +21,14 @@ export function WatchedMoviesList({ watched }) {
               <span>⏳</span>
               <span>{movie.runtime} min</span>
             </p>
+            <button
+              className="btn-delete"
+              onClick={() => {
+                handleDeleteMovie(movie.imdbID);
+              }}
+            >
+              X
+            </button>
           </div>
         </li>
       ))}
