@@ -1,10 +1,29 @@
 import { useEffect, useState } from "react";
 import { KEY, Loader } from "../../App";
 import StarRating from "../StartRating";
-export default function MovieDetails({ setSelectMovie, movies, selectMovie }) {
+export default function MovieDetails({
+  setSelectMovie,
+  movies,
+  selectMovie,
+  onAddWatchedMovie,
+  watched,
+}) {
   const [movDetails, setmovDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [rating, setRating] = useState(null);
+
+  function handleAdd() {
+    const newMovie = {
+      imdbID: selectMovie,
+      Title: title,
+      Year: year,
+      Poster: poster,
+      runtime: Number(runtime.split(" ").at(0)),
+      imdbRating: Number(imdbRating),
+      userRating: rating,
+    };
+    onAddWatchedMovie(newMovie);
+  }
 
   useEffect(
     function () {
@@ -51,16 +70,14 @@ export default function MovieDetails({ setSelectMovie, movies, selectMovie }) {
     Director: director,
     Genre: genre,
   } = movDetails;
+  const movieExist = watched.find((movie) => movie.imdbID === selectMovie);
+
   return (
     <>
       {isLoading && <Loader />}
+
       {!isLoading && (
-        <div
-          className="details"
-          onClick={() => {
-            rating != null && setRating(null);
-          }}
-        >
+        <div className="details">
           <header>
             <button
               className="btn-back"
@@ -70,7 +87,7 @@ export default function MovieDetails({ setSelectMovie, movies, selectMovie }) {
             >
               &larr;
             </button>
-            <img src={poster} alt={`Poster of ${title}`} />{" "}
+            <img src={poster} alt={`Poster of ${title}`} />
             <div className="details-overview">
               <h2>{title}</h2>
               <p>
@@ -85,14 +102,21 @@ export default function MovieDetails({ setSelectMovie, movies, selectMovie }) {
 
           <section>
             <div className="rating">
-              <StarRating
-                maxRating={10}
-                size={24}
-                color="green"
-                externalState={setRating}
-              />
+              {movieExist ? (
+                <p>You rated this movie {movieExist.userRating} ⭐️</p>
+              ) : (
+                <StarRating
+                  maxRating={10}
+                  size={24}
+                  color="green"
+                  externalState={setRating}
+                />
+              )}
+
               {rating != null && (
-                <button className="btn-add">+ Add to List</button>
+                <button onClick={handleAdd} className="btn-add">
+                  + Add to List
+                </button>
               )}
             </div>
 
