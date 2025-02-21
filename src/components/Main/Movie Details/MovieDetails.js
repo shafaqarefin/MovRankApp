@@ -7,6 +7,7 @@ export default function MovieDetails({
   selectMovie,
   onAddWatchedMovie,
   watched,
+  onCloseMovie,
 }) {
   const [movDetails, setmovDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +59,22 @@ export default function MovieDetails({
     },
     [selectMovie]
   );
+
+  useEffect(
+    function () {
+      function callback(e) {
+        if (e.code === "Escape") {
+          onCloseMovie();
+          console.error("closing");
+        }
+      }
+      document.addEventListener("keydown", callback);
+      return function () {
+        document.removeEventListener("keydown", callback);
+      };
+    },
+    [onCloseMovie]
+  );
   const {
     Title: title,
     Year: year,
@@ -73,6 +90,7 @@ export default function MovieDetails({
   useEffect(
     function () {
       if (!title) return;
+      console.log(`clean up effect for ${title}`);
       document.title = `Movie: ${title}`;
       return function () {
         document.title = "MovRank";
