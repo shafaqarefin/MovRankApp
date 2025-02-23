@@ -60,7 +60,9 @@ export const KEY = process.env.REACT_APP_OMDB_API_KEY; //if you have your own ke
 
 export default function App() {
   const [movies, setMovies] = useState([]);
-  const [watched, setWatched] = useState([]);
+  const [watched, setWatched] = useState(function () {
+    return JSON.parse(localStorage.getItem("watched")) || [];
+  });
   const [isOpen1, setIsOpen1] = useState(true);
   const [isOpen2, setIsOpen2] = useState(true);
   const [query, setQuery] = useState("");
@@ -124,7 +126,12 @@ export default function App() {
     },
     [query]
   );
-
+  useEffect(
+    function () {
+      localStorage.setItem("watched", JSON.stringify(watched));
+    },
+    [watched]
+  );
   return (
     <>
       <NavBar>
