@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { KEY, Loader } from "../../App";
 import StarRating from "../StartRating";
+import { useKey } from "../../../hooks/useKey";
 export default function MovieDetails({
   setSelectMovie,
   movies,
@@ -8,11 +9,12 @@ export default function MovieDetails({
   onAddWatchedMovie,
   watched,
   onCloseMovie,
+  setQuery,
 }) {
   const [movDetails, setmovDetails] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [rating, setRating] = useState(null);
-
+  const countClicked = useRef(0);
   function handleAdd() {
     const newMovie = {
       imdbID: selectMovie,
@@ -25,6 +27,14 @@ export default function MovieDetails({
     };
     onAddWatchedMovie(newMovie);
   }
+  useEffect(
+    function () {
+      if (rating) {
+        countClicked.current = countClicked.current + 1;
+      }
+    },
+    [rating]
+  ); //Use ref example
 
   useEffect(
     function () {
@@ -60,21 +70,7 @@ export default function MovieDetails({
     [selectMovie]
   );
 
-  useEffect(
-    function () {
-      function callback(e) {
-        if (e.code === "Escape") {
-          onCloseMovie();
-          console.error("closing");
-        }
-      }
-      document.addEventListener("keydown", callback);
-      return function () {
-        document.removeEventListener("keydown", callback);
-      };
-    },
-    [onCloseMovie]
-  );
+  useKey("Escape", onCloseMovie);
   const {
     Title: title,
     Year: year,
@@ -87,10 +83,10 @@ export default function MovieDetails({
     Director: director,
     Genre: genre,
   } = movDetails;
+
   useEffect(
     function () {
       if (!title) return;
-      console.log(`clean up effect for ${title}`);
       document.title = `Movie: ${title}`;
       return function () {
         document.title = "MovRank";
